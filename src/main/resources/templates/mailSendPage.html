@@ -14,7 +14,7 @@
     <div style="float: left; width: 50%;">
         <h1>텍스트 메일 보내기</h1>
 
-        <form th:action="@{/mail/send}" enctype="multipart/form-data">
+        <form th:action="@{/mail/send}" enctype="multipart/form-data", method="post">
             <table>
                 <tr class="form-group">
                     <td>보내는 사람</td>
@@ -118,11 +118,15 @@
             files: $("#fileList").val()
         };
 
+        let form = new FormData();
+        form.append("mailInfo", new Blob([JSON.stringify(mailInfo)], {type: "application/json"}))
+        form.append("files", fileList);
+
         $.ajax({
             url: "/mail/send",
-            data : {mailInfo: mailInfo, files:fileList},
-            headers: {'Authorization' : 'weds'},
-            type : "POST",
+            method : "POST",
+            data : form,
+            headers: {"Authorization" : weds},
             enctype: "multipart/form-data",
             processData: false,
             contentType: false,
