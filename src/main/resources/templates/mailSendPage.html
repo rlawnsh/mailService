@@ -121,6 +121,7 @@
         let form = new FormData();
         form.append("mailInfo", new Blob([JSON.stringify(mailInfo)], {type: "application/json"}))
         form.append("files", fileList);
+        console.log(1)
 
         $.ajax({
             url: "/mail/send",

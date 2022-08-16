@@ -29,14 +29,14 @@ public class MailController {
 
 
     @PostMapping("/mail/send")
-    public String sendMail(@RequestPart("mailInfo") MailDto mailDto, @RequestPart(value = "files", required = false) List<MultipartFile> fileList) throws MessagingException, IOException {
+    public ResponseEntity<String> sendMail(@RequestPart("mailInfo") MailDto mailDto, @RequestPart(value = "files", required = false) List<MultipartFile> fileList) throws MessagingException, IOException {
 
         if (bucket.tryConsume(1)) {
             log.info(">>> Remain bucket count : {}", bucket.getAvailableTokens());
             mailService.sendMail(mailDto, fileList);
-            return "redirect:/index";
+            return new ResponseEntity<String>("Ok", HttpStatus.OK);
         }
         log.warn(">>> Exhausted limit in bucket");
-        return "error";
+        return new ResponseEntity<String>("Too Many Request", HttpStatus.TOO_MANY_REQUESTS);
     }
 }

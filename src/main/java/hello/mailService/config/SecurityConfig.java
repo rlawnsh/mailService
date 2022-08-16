@@ -24,15 +24,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-//        ApiKeyAuthFilter filter = new ApiKeyAuthFilter(principalRequestHeader);
-//        filter.setAuthenticationManager(authentication -> {
-//            String principal = (String) authentication.getPrincipal();
-//            if (!principalRequestValue.contains(principal)) {
-//                throw new BadCredentialsException("The API key was not found or not the expected value");
-//            }
-//            authentication.setAuthenticated(true);
-//            return authentication;
-//        });
+        ApiKeyAuthFilter filter = new ApiKeyAuthFilter(principalRequestHeader);
+        filter.setAuthenticationManager(authentication -> {
+            String principal = (String) authentication.getPrincipal();
+            if (!principalRequestValue.contains(principal)) {
+                throw new BadCredentialsException("The API key was not found or not the expected value");
+            }
+            authentication.setAuthenticated(true);
+            return authentication;
+        });
 
         http
                 .cors().disable()
@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .and()
 //                .addFilter(filter)
                 .authorizeRequests()
-                .antMatchers("/index","/mail/send").permitAll()
+                .antMatchers("/index").permitAll()
                 .anyRequest()
                 .authenticated();
         return http.build();
