@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-//                .addFilter(filter)
+                .addFilter(filter)
                 .authorizeRequests()
                 .antMatchers("/index").permitAll()
                 .anyRequest()
