@@ -32,13 +32,7 @@ public class MailService {
         messageHelper.setSubject(mailDto.getTitle());
         messageHelper.setText(mailDto.getContent(), true);
 
-//        이메일 본문 이미지 삽임
-//        for (MultipartFile img : imgList) {
-//            messageHelper.addInline("test", new ByteArrayResource(img.getBytes()), img.getContentType());
-//        }
-
 //         파일첨부
-
         if (fileList != null) {
             for (MultipartFile file : fileList) {
                 messageHelper.addAttachment(file.getOriginalFilename(), new ByteArrayResource(file.getBytes()), file.getContentType());
