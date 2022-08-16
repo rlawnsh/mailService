@@ -25,11 +25,13 @@ spring:
         enabled: true
 
 
-appname:
-  http:
-    auth-token-header:
-      name: Authorization
-    auth-token: qwer,wew,weds
+http:
+  auth-token-header:
+    name: Authorization
+  authToken:
+    server1: qwe
+    server2: qwer
+    server3: qwert
 
 
 
