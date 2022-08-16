@@ -1,6 +1,8 @@
 package hello.mailService.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,17 +11,27 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties
+@ConfigurationProperties(prefix = "http")
 public class SecurityConfig {
 
-    @Value("${appname.http.auth-token-header.name}")
+    @Value("${http.auth-token-header.name}")
     private String principalRequestHeader;
 
-    @Value("${appname.http.auth-token}")
-    private List<String> principalRequestValue;
+    public static HashMap<String, String> authToken;
+
+    public HashMap<String, String> getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(HashMap<String, String> authToken) {
+        this.authToken = authToken;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -27,7 +39,7 @@ public class SecurityConfig {
         ApiKeyAuthFilter filter = new ApiKeyAuthFilter(principalRequestHeader);
         filter.setAuthenticationManager(authentication -> {
             String principal = (String) authentication.getPrincipal();
-            if (!principalRequestValue.contains(principal)) {
+            if (!authToken.containsValue(principal)) {
                 throw new BadCredentialsException("The API key was not found or not the expected value");
             }
             authentication.setAuthenticated(true);
