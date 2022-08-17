@@ -1,5 +1,7 @@
 package hello.mailService.service;
 
+import hello.mailService.db.ApiStatistics;
+import hello.mailService.db.ApiStatisticsRepository;
 import hello.mailService.dto.MailDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -10,7 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -18,6 +22,7 @@ import java.util.List;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
+    private final ApiStatisticsRepository apiStatisticsRepository;
 
     public void sendMail(MailDto mailDto, List<MultipartFile> fileList) throws MessagingException, IOException {
 
@@ -30,8 +35,7 @@ public class MailService {
         messageHelper.setTo((String[]) mailDto.getToAddressList().toArray(new String[toAddressSize]));
         messageHelper.setCc((String[]) mailDto.getCcAddressList().toArray(new String[toCcSize]));
         messageHelper.setSubject(mailDto.getTitle());
-        messageHelper.setText(mailDto.getContent(), true);
-
+        messageHelper.setText(mailDto.getTextContent(), mailDto.getHtmlContent());
 //         파일첨부
         if (fileList != null) {
             for (MultipartFile file : fileList) {
@@ -41,5 +45,15 @@ public class MailService {
 
         javaMailSender.send(message);
 
+    }
+
+    @Transactional
+    public void updateCount(String key) {
+        if (apiStatisticsRepository.findByServerNameAndLocalDate(key, LocalDate.now()) != null) {
+            apiStatisticsRepository.updateCount(key, LocalDate.now());
+        } else {
+            ApiStatistics apiStatistics = new ApiStatistics(key, 1);
+            apiStatisticsRepository.save(apiStatistics);
+        }
     }
 }
