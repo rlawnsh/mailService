@@ -1,6 +1,7 @@
 package hello.mailService.controller;
 
 import hello.mailService.config.SecurityConfig;
+import hello.mailService.db.ApiStatisticsRepository;
 import hello.mailService.dto.MailDto;
 import hello.mailService.service.Bucket4jService;
 import hello.mailService.service.MailService;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -24,9 +26,11 @@ import java.util.List;
 public class MailController {
 
     private final MailService mailService;
+    private final ApiStatisticsRepository apiStatisticsRepository;
     private static final Bucket bucket = Bucket4jService.generateSimpleBucket();
 
     @PostMapping(value = "/mail/send", consumes = "multipart/form-data")
+    @Transactional
     public ResponseEntity<String> sendMail(@RequestParam String fromAddress,
                                            @RequestParam("toAddress") List<String> toAddressList,
                                            @RequestParam("ccAddress") List<String> ccAddressList,
@@ -45,6 +49,7 @@ public class MailController {
                 String value = authToken.get(key);
                 if (value.equals(authorization)) {
                     log.info("보낸 서버는 : {}", key);
+                    apiStatisticsRepository.updateCount(key);
                 }
             }
             mailService.sendMail(mailDto, fileList);
