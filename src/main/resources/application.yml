@@ -10,7 +10,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mailDB?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://${MAILDBURL}/mailDB?serverTimezone=Asia/Seoul
     username: ${DB_USR}
     password: ${DB_PWD}
 
@@ -34,14 +34,18 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 
 http:
   auth-token-header:
     name: Authorization
   authToken:
-    server1: ${PWD1}
-    server2: ${PWD2}
-    server3: ${PWD3}
+    server1: ${KEY1}
+    server2: ${KEY2}
+    server3: ${KEY3}
 
 
 
