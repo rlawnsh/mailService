@@ -11,8 +11,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mailDB?serverTimezone=Asia/Seoul
-    username: root
-    password: pw123
+    username: ${DB_USR}
+    password: ${DB_PWD}
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -28,22 +28,20 @@ spring:
   mail:
     host: mail.vcinc.co.kr
     port: 25
-    username: jnkim@vcinc.co.kr
-    password: kjy86441128!
+    username: ${MAIL_USR}
+    password: ${MAIL_PWD}
   mvc:
     hiddenmethod:
       filter:
         enabled: true
 
-
 http:
   auth-token-header:
     name: Authorization
   authToken:
-    server1: qwe
-    server2: qwer
-    server3: qwert
-
+    server1: ${PWD1}
+    server2: ${PWD2}
+    server3: ${PWD3}
 
 
 
